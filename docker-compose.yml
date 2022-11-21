@@ -1,0 +1,38 @@
+version: '3'
+services:
+  postgres:
+    image: postgres:14.1-alpine
+    ports:
+      - 5432:5432
+    environment:
+      POSTGRES_DB: ${DB_NAME}
+      POSTGRES_USER: ${DB_USER}
+      POSTGRES_PASSWORD: ${DB_PASSWORD}
+    volumes:
+      - db:/var/lib/postgresql/data
+    networks:
+      - main-network
+    env_file:
+      - .env
+    restart: always
+
+  api:
+    build:
+      context: ./
+      dockerfile: Dockerfile
+    command: sh -c "python main.py"
+    ports:
+      - 8000:8000
+    networks:
+      - main-network
+    volumes:
+      - .:/code
+    depends_on:
+      - postgres
+  
+volumes:
+  db:
+    driver: local
+    
+networks:
+  main-network:
