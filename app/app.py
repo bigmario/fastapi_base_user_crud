@@ -6,7 +6,7 @@ from sqlalchemy.orm import Session
 
 from .modules.users.controllers import users_router
 
-from .core.database import create_db, get_db
+from .core.database import create_db
 
 
 app = FastAPI()
