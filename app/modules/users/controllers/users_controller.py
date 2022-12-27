@@ -1,12 +1,11 @@
-from typing import List, Optional
-from fastapi import Body, BackgroundTasks, HTTPException
-from fastapi import APIRouter, status, Depends
+from typing import List, Optional, Any
+from fastapi import APIRouter, status, Depends, Query
 
 from sqlalchemy.orm import Session
 
 from app.core.database.schemas import User, UserCreate
 from app.core.database.services import get_db
-from app.core.database.repositories import UserRepo
+from app.modules.users.services import UserService
 
 
 users_router = APIRouter(
@@ -14,28 +13,27 @@ users_router = APIRouter(
 )
 
 
-@users_router.post("/users", response_model=User, status_code=201)
-async def create_item(item_request: UserCreate, db: Session = Depends(get_db)):
+@users_router.post("/users", response_model=User, status_code=status.HTTP_201_CREATED)
+async def create_item(
+    item_request: UserCreate,
+    db: Session = Depends(get_db),
+    userService: UserService = Depends(),
+):
     """
     Create an Item and store it in the database
     """
 
-    db_item = UserRepo.fetch_by_name(db, name=item_request.name)
-    if db_item:
-        raise HTTPException(status_code=400, detail="Item already exists!")
-
-    return await UserRepo.create(db=db, user=item_request)
+    return await userService.create_user(item_request, db)
 
 
-@users_router.get("/users", response_model=List[User])
-def get_all_items(name: Optional[str] = None, db: Session = Depends(get_db)):
+@users_router.get("/users", response_model=List[User], status_code=status.HTTP_200_OK)
+async def get_all_items(
+    name: Optional[str] | None = Query(),
+    db: Session = Depends(get_db),
+    userService: UserService = Depends(),
+):
     """
     Get all the Items stored in database
     """
-    if name:
-        items = []
-        db_item = UserRepo.fetch_by_name(db, name)
-        items.append(db_item)
-        return items
-    else:
-        return UserRepo.fetch_all(db)
+
+    return await userService.get_users(name, db)

@@ -2,5 +2,5 @@ fastapi
 uvicorn
 sqlalchemy
 pydantic[dotenv]
-psycopg2
+psycopg2-binary
 bcrypt

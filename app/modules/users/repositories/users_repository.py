@@ -24,7 +24,7 @@ class UserRepo:
     def fetch_by_id(db: Session, _id):
         return db.query(models.User).filter(models.User.id == _id).first()
 
-    def fetch_by_name(db: Session, name):
+    def fetch_by_name(self, db: Session, name):
         return db.query(models.User).filter(models.User.name == name).first()
 
     def fetch_all(db: Session, skip: int = 0, limit: int = 100):

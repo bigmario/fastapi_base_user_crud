@@ -1,11 +1,12 @@
-from fastapi import FastAPI
+from fastapi import FastAPI, Depends
 from fastapi.responses import JSONResponse
 from fastapi.middleware.cors import CORSMiddleware
 
+from sqlalchemy.orm import Session
 
 from .modules.users.controllers import users_router
 
-from .core.database import create_db
+from .core.database import create_db, get_db
 
 
 app = FastAPI()
@@ -28,7 +29,7 @@ app.include_router(users_router)
 
 
 @app.on_event("startup")
-async def start_db():
+async def start_db(db: Session = Depends(create_db)):
     create_db()
 
 
