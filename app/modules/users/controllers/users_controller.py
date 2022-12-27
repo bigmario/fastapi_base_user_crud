@@ -14,7 +14,12 @@ users_router = APIRouter(
 )
 
 
-@users_router.post("/users", response_model=User, status_code=status.HTTP_201_CREATED)
+@users_router.post(
+    path="/users",
+    response_model=User,
+    response_model_exclude_unset=True,
+    status_code=status.HTTP_201_CREATED,
+)
 async def create_item(
     item_request: UserCreate = Body(...),
     db: Session = Depends(get_db),
@@ -29,7 +34,12 @@ async def create_item(
         raise HTTPException(status_code=e.status_code, detail=e.detail)
 
 
-@users_router.get("/users", response_model=List[User], status_code=status.HTTP_200_OK)
+@users_router.get(
+    path="/users",
+    response_model=List[User],
+    response_model_exclude_unset=True,
+    status_code=status.HTTP_200_OK,
+)
 async def get_all_items(
     name: str = Query(default=None),
     db: Session = Depends(get_db),
@@ -66,7 +76,10 @@ async def update_item(
 
 
 @users_router.delete(
-    "/users/{user_id}", response_model=User, status_code=status.HTTP_200_OK
+    path="/users/{user_id}",
+    response_model=User,
+    response_model_exclude_unset=True,
+    status_code=status.HTTP_200_OK,
 )
 async def delete_item(
     user_id: int = Path(...),
