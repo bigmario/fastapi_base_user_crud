@@ -1,6 +1,9 @@
 import bcrypt
 from sqlalchemy.orm import Session
 
+
+from fastapi.exceptions import HTTPException
+
 import app.core.database.models.db_models as models
 import app.core.database.schemas.db_schemas as schemas
 
@@ -30,12 +33,25 @@ class UserRepo:
     def fetch_all(self, db: Session, skip: int = 0, limit: int = 100):
         return db.query(models.User).offset(skip).limit(limit).all()
 
-    async def delete(self, db: Session, user_id):
+    def delete(self, db: Session, user_id):
         db_user = db.query(models.User).filter_by(id=user_id).first()
+
+        if not db_user:
+            raise HTTPException(status_code=404, detail="Item not exists!")
+
         db.delete(db_user)
         db.commit()
+        return db_user
 
-    async def update(self, db: Session, user_data):
-        updated_user = db.merge(user_data)
+    def update(self, db: Session, user_id, user_data: schemas.UserUpdate):
+        db_query = db.query(models.User).filter(models.User.id == user_id)
+        db_item = db_query.first()
+
+        if not db_item:
+            raise HTTPException(status_code=404, detail="Item not exists!")
+
+        data_dict = user_data.dict(exclude_unset=True)
+        db_query.update(data_dict, synchronize_session=False)
         db.commit()
-        return updated_user
+        db.refresh(db_item)
+        return db_item

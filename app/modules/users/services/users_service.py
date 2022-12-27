@@ -1,9 +1,11 @@
 from sqlalchemy.orm import Session
 from typing import List, Optional
-from fastapi import status, Body, BackgroundTasks, HTTPException, Depends
+from fastapi import status, Body, BackgroundTasks, Depends
+from fastapi.exceptions import HTTPException
+from fastapi.encoders import jsonable_encoder
 
 from app.modules.users.repositories import UserRepo
-from app.core.database.schemas import User, UserCreate
+from app.core.database.schemas import User, UserCreate, UserUpdate
 
 
 class UserService:
@@ -11,7 +13,6 @@ class UserService:
         self.userRepo = userRepo
 
     async def create_user(self, item_request: UserCreate, db: Session):
-
         db_item = self.userRepo.fetch_by_name(db, name=item_request.name)
         if db_item:
             raise HTTPException(status_code=400, detail="Item already exists!")
@@ -30,3 +31,9 @@ class UserService:
             return items
         else:
             return self.userRepo.fetch_all(db)
+
+    async def update_user(self, user_id: int, db: Session, item_request: UserUpdate):
+        return self.userRepo.update(db, user_id, item_request)
+
+    async def delete_user(self, user_id: int, db: Session):
+        return self.userRepo.delete(db, user_id)
