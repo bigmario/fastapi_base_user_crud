@@ -1,1 +1,1 @@
-from .db_schemas import User, UserBase, UserCreate, UserUpdate, DbError
+from .db_schemas import User, UserBase, UserCreate, UserUpdate

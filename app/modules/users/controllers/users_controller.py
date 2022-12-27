@@ -4,7 +4,7 @@ from fastapi.exceptions import HTTPException
 
 from sqlalchemy.orm import Session
 
-from app.core.database.schemas import User, UserCreate, UserUpdate, DbError
+from app.core.database.schemas import User, UserCreate, UserUpdate
 from app.core.database.services import get_db
 from app.modules.users.services import UserService
 
