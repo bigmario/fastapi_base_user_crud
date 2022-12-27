@@ -16,7 +16,7 @@ class UserService:
         if db_item:
             raise HTTPException(status_code=400, detail="Item already exists!")
 
-        return await self.userRepo.create(db=db, user=item_request)
+        return await self.userRepo.create(db, item_request)
 
     async def get_users(self, name: str, db: Session):
         if name:

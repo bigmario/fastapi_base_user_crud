@@ -28,7 +28,7 @@ async def create_item(
 
 @users_router.get("/users", response_model=List[User], status_code=status.HTTP_200_OK)
 async def get_all_items(
-    name: Optional[str] | None = Query(),
+    name: str = Query(default=None),
     db: Session = Depends(get_db),
     userService: UserService = Depends(),
 ):
