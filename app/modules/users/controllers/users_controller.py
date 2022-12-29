@@ -1,4 +1,4 @@
-from typing import List
+from typing import List, Any
 from fastapi import Body, APIRouter, status, Depends, Query, Path
 from fastapi.exceptions import HTTPException
 
@@ -6,11 +6,13 @@ from sqlalchemy.orm import Session
 
 from app.core.database.schemas import User, UserCreate, UserUpdate
 from app.core.database.services import get_db
+from app.core.auth.services import oauth2_scheme
 from app.modules.users.services import UserService
 
 
 users_router = APIRouter(
     tags=["Users"],
+    # dependencies=[Depends(oauth2_scheme)],
 )
 
 

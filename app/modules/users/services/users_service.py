@@ -32,6 +32,14 @@ class UserService:
         else:
             return self.userRepo.fetch_all(db)
 
+    async def get_user_by_username(self, username: str, db: Session):
+        db_item = self.userRepo.fetch_by_username(db, username)
+        if not db_item:
+            raise HTTPException(
+                status_code=status.HTTP_404_NOT_FOUND, detail="Username not found!"
+            )
+        return db_item
+
     async def update_user(self, user_id: int, db: Session, item_request: UserUpdate):
         return self.userRepo.update(db, user_id, item_request)
 

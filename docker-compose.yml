@@ -29,7 +29,7 @@ services:
       - .:/code
     depends_on:
       - postgres
-    restart: on-failure
+    restart: always
   
 volumes:
   db:

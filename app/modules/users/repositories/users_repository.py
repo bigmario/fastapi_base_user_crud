@@ -18,7 +18,7 @@ class UserRepo:
             name=user.name,
             last_name=user.last_name,
         )
-
+        db_user.password = db_user.password.decode("utf-8")
         db.add(db_user)
         db.commit()
         db.refresh(db_user)
@@ -29,6 +29,9 @@ class UserRepo:
 
     def fetch_by_name(self, db: Session, name):
         return db.query(models.User).filter(models.User.name == name).first()
+
+    def fetch_by_username(self, db: Session, username):
+        return db.query(models.User).filter(models.User.username == username).first()
 
     def fetch_all(self, db: Session, skip: int = 0, limit: int = 100):
         return db.query(models.User).offset(skip).limit(limit).all()
