@@ -10,7 +10,9 @@ conf = Settings()
 SQLALCHEMY_DATABASE_URL = f"postgresql+psycopg2://{conf.db_user}:{conf.db_password}@{conf.db_host}:{conf.db_port}/{conf.db_name}"
 
 
-engine = create_engine(SQLALCHEMY_DATABASE_URL, echo=True)
+engine = create_engine(
+    SQLALCHEMY_DATABASE_URL, echo=False if conf.log_level == "info" else True
+)
 
 # SQLALCHEMY_DATABASE_URL = "sqlite:///./data.db"
 
