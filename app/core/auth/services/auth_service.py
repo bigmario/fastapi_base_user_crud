@@ -36,9 +36,7 @@ class AuthService:
             )
         hashed_password = user.password
 
-        if bcrypt.checkpw(
-            form_data.password.encode("utf-8"), hashed_password.encode("utf-8")
-        ):
+        if bcrypt.checkpw(form_password, hashed_password.encode("utf-8")):
             return {"access_token": user.username, "token_type": "bearer"}
         else:
             raise HTTPException(
