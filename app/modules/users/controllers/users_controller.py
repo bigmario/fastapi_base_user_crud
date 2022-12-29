@@ -12,7 +12,7 @@ from app.modules.users.services import UserService
 
 users_router = APIRouter(
     tags=["Users"],
-    # dependencies=[Depends(oauth2_scheme)],
+    dependencies=[Depends(oauth2_scheme)],
 )
 
 
