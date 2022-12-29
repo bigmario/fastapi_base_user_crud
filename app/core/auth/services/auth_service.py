@@ -24,12 +24,11 @@ class AuthService:
 
     async def login(
         self,
-        db: Session,
         form_data: OAuth2PasswordRequestForm,
     ):
 
         form_password = form_data.password.encode("utf-8")
-        user = await self.user_service.get_user_by_username(form_data.username, db)
+        user = await self.user_service.get_user_by_username(form_data.username, self.db)
         if not user:
             raise HTTPException(
                 status_code=400, detail="Incorrect username or password"

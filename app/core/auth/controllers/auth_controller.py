@@ -12,8 +12,7 @@ auth_router = APIRouter(
 
 @auth_router.post("/auth/token")
 async def login(
-    db: Session = Depends(get_db),
     form_data: OAuth2PasswordRequestForm = Depends(),
     auth_service: AuthService = Depends(),
 ):
-    return await auth_service.login(db=db, form_data=form_data)
+    return await auth_service.login(form_data=form_data)
