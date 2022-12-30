@@ -1,5 +1,5 @@
 import bcrypt
-from jwt import encode
+from jwt import encode, decode
 from fastapi import Depends
 from fastapi.security import OAuth2PasswordBearer, OAuth2PasswordRequestForm
 from fastapi.exceptions import HTTPException
@@ -49,6 +49,10 @@ class AuthService:
                 status_code=400, detail="Incorrect username or password"
             )
 
-    async def __create_token(self, data: dict):
+    async def __create_token(self, data: dict) -> str:
         token: str = encode(payload=data, key=config.jwt_secret, algorithm="HS256")
         return token
+
+    async def __validate_token(self, token: str) -> dict:
+        payload = decode(token, key=config.jwt_secret, algorithm=["HS256"])
+        return payload
