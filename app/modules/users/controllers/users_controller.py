@@ -22,13 +22,13 @@ users_router = APIRouter(
     response_model_exclude_unset=True,
     status_code=status.HTTP_201_CREATED,
 )
-async def create_item(
+async def create_user(
     item_request: UserCreate = Body(...),
     db: Session = Depends(get_db),
     userService: UserService = Depends(),
 ):
     """
-    Create an Item and store it in the database
+    Create an User and store it in the database
     """
     try:
         return await userService.create_user(item_request, db)
@@ -42,13 +42,13 @@ async def create_item(
     response_model_exclude_unset=True,
     status_code=status.HTTP_200_OK,
 )
-async def get_all_items(
+async def get_all_users(
     name: str = Query(default=None),
     db: Session = Depends(get_db),
     userService: UserService = Depends(),
 ):
     """
-    Get all the Items stored in database
+    Get all the Users stored in database
     """
     try:
         return await userService.get_users(name, db)
@@ -62,14 +62,14 @@ async def get_all_items(
     response_model_exclude_unset=True,
     status_code=status.HTTP_200_OK,
 )
-async def update_item(
+async def update_user(
     user_id: int = Path(...),
     item_request: UserUpdate = Body(...),
     db: Session = Depends(get_db),
     userService: UserService = Depends(),
 ):
     """
-    Updateate an item in the database
+    Update an User in the database
     """
     try:
         return await userService.update_user(user_id, db, item_request)
@@ -83,13 +83,13 @@ async def update_item(
     response_model_exclude_unset=True,
     status_code=status.HTTP_200_OK,
 )
-async def delete_item(
+async def delete_user(
     user_id: int = Path(...),
     db: Session = Depends(get_db),
     userService: UserService = Depends(),
 ):
     """
-    Delete an item in the database
+    Delete an User in the database
     """
     try:
         return await userService.delete_user(user_id, db)

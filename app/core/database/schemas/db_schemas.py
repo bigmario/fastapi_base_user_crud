@@ -14,9 +14,9 @@ class UserCreate(UserBase):
 
 
 class UserUpdate(BaseModel):
-    username: str | None = None
-    name: str | None = None
-    last_name: str | None = None
+    username: Optional[str] = None
+    name: Optional[str] = None
+    last_name: Optional[str] = None
 
     class Config:
         exclude_unset = True

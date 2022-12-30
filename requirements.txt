@@ -5,3 +5,4 @@ pydantic[dotenv]
 psycopg2-binary
 bcrypt
 python-multipart
+pyjwt

@@ -1,4 +1,4 @@
-from fastapi import FastAPI, Depends
+from fastapi import FastAPI, Depends, status
 from fastapi.responses import JSONResponse
 from fastapi.middleware.cors import CORSMiddleware
 
@@ -11,6 +11,10 @@ from app.core.database import create_db
 
 
 app = FastAPI()
+app.title = "FastAPI Base User CRUD with Authentication"
+app.description = """
+    API developed with FastAPI for basic user administration and authentication
+    Mario Castro <mariocastro.pva@gmail.com>"""
 
 origins = [
     "*",
@@ -35,7 +39,7 @@ async def start_db(db: Session = Depends(create_db)):
     create_db()
 
 
-@app.get(path="/", summary="Index", tags=["Index"])
+@app.get(path="/", summary="Index", tags=["Index"], status_code=status.HTTP_200_OK)
 async def index():
     return JSONResponse(
         {

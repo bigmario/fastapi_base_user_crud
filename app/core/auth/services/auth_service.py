@@ -1,9 +1,11 @@
 import bcrypt
+from jwt import encode
 from fastapi import Depends
 from fastapi.security import OAuth2PasswordBearer, OAuth2PasswordRequestForm
 from fastapi.exceptions import HTTPException
 
 from sqlalchemy.orm import Session
+from app.core.config import Settings
 from app.core.database.services import get_db
 
 from app.core.database.schemas import UserBase
@@ -11,6 +13,7 @@ from app.modules.users.services import UserService
 
 
 oauth2_scheme = OAuth2PasswordBearer(tokenUrl="auth/token")
+config = Settings()
 
 
 class AuthService:
@@ -36,8 +39,16 @@ class AuthService:
         hashed_password = user.password
 
         if bcrypt.checkpw(form_password, hashed_password.encode("utf-8")):
-            return {"access_token": user.username, "token_type": "bearer"}
+            payload = {"sub": user.id, "name": user.name}
+            return {
+                "access_token": await self.__create_token(payload),
+                "token_type": "bearer",
+            }
         else:
             raise HTTPException(
                 status_code=400, detail="Incorrect username or password"
             )
+
+    async def __create_token(self, data: dict):
+        token: str = encode(payload=data, key=config.jwt_secret, algorithm="HS256")
+        return token
