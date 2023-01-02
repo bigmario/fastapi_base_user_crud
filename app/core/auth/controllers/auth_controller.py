@@ -10,7 +10,7 @@ auth_router = APIRouter(
 )
 
 
-@auth_router.post("/auth/token")
+@auth_router.post("/auth/login")
 async def login(
     form_data: OAuth2PasswordRequestForm = Depends(),
     auth_service: AuthService = Depends(),

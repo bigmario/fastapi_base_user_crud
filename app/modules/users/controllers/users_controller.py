@@ -12,7 +12,6 @@ from app.modules.users.services import UserService
 
 users_router = APIRouter(
     tags=["Users"],
-    dependencies=[Depends(oauth2_scheme)],
 )
 
 
@@ -61,6 +60,7 @@ async def get_all_users(
     response_model=User,
     response_model_exclude_unset=True,
     status_code=status.HTTP_200_OK,
+    dependencies=[Depends(oauth2_scheme)],
 )
 async def update_user(
     user_id: int = Path(...),
@@ -82,6 +82,7 @@ async def update_user(
     response_model=User,
     response_model_exclude_unset=True,
     status_code=status.HTTP_200_OK,
+    dependencies=[Depends(oauth2_scheme)],
 )
 async def delete_user(
     user_id: int = Path(...),
