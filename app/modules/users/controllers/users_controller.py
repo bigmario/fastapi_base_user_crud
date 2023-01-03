@@ -6,7 +6,7 @@ from fastapi_pagination import Page, paginate
 from sqlalchemy.orm import Session
 
 from app.core.database.services import get_db
-from app.core.auth.services import oauth2_scheme
+from app.modules.auth.services import oauth2_scheme
 from app.modules.users.schemas import User, UserCreate, UserUpdate
 from app.modules.users.services import UserService
 

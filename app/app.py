@@ -1,11 +1,9 @@
-from fastapi import FastAPI, Depends, status
+from fastapi import FastAPI, status
 from fastapi.responses import JSONResponse
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi_pagination import add_pagination
 
-from sqlalchemy.orm import Session
-
-from app.core.auth.controllers import auth_router
+from app.modules.auth.controllers import auth_router
 from app.modules.users.controllers import users_router
 
 from app.core.database import create_db
