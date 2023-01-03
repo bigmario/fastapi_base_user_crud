@@ -1,6 +1,7 @@
 from fastapi import FastAPI, Depends, status
 from fastapi.responses import JSONResponse
 from fastapi.middleware.cors import CORSMiddleware
+from fastapi_pagination import add_pagination
 
 from sqlalchemy.orm import Session
 
@@ -35,7 +36,7 @@ app.include_router(users_router)
 
 
 @app.on_event("startup")
-async def start_db(db: Session = Depends(create_db)):
+async def start_db():
     create_db()
 
 
@@ -47,3 +48,6 @@ async def index():
             "Message": "Base Users CRUD !!",
         }
     )
+
+
+add_pagination(app)

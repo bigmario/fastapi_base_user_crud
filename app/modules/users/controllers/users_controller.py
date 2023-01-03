@@ -1,12 +1,13 @@
 from typing import List, Any
 from fastapi import Body, APIRouter, status, Depends, Query, Path
 from fastapi.exceptions import HTTPException
+from fastapi_pagination import Page, paginate
 
 from sqlalchemy.orm import Session
 
-from app.core.database.schemas import User, UserCreate, UserUpdate
 from app.core.database.services import get_db
 from app.core.auth.services import oauth2_scheme
+from app.modules.users.schemas import User, UserCreate, UserUpdate
 from app.modules.users.services import UserService
 
 
@@ -32,12 +33,13 @@ async def create_user(
     try:
         return await userService.create_user(item_request, db)
     except Exception as e:
-        raise HTTPException(status_code=e.status_code, detail=e.detail)
+        return e
+        # raise HTTPException(status_code=e.status_code, detail=e.detail)
 
 
 @users_router.get(
     path="/users",
-    response_model=List[User],
+    response_model=Page[User],
     response_model_exclude_unset=True,
     status_code=status.HTTP_200_OK,
 )
@@ -50,7 +52,8 @@ async def get_all_users(
     Get all the Users stored in database
     """
     try:
-        return await userService.get_users(name, db)
+        users = await userService.get_users(name, db)
+        return paginate(users)
     except Exception as e:
         raise HTTPException(status_code=e.status_code, detail=e.detail)
 

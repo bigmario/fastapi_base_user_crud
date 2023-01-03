@@ -4,10 +4,10 @@ from pydantic import BaseModel, Field
 
 
 class UserBase(BaseModel):
-    username: str
+    email: str
     name: str
     last_name: str
-    email: str
+    phone: str
 
 
 class UserCreate(UserBase):
@@ -15,9 +15,10 @@ class UserCreate(UserBase):
 
 
 class UserUpdate(BaseModel):
-    username: Optional[str] = None
+    email: Optional[str] = None
     name: Optional[str] = None
     last_name: Optional[str] = None
+    phone: Optional[str] = None
 
     class Config:
         exclude_unset = True

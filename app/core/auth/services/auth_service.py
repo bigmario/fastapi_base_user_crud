@@ -9,7 +9,6 @@ from sqlalchemy.orm import Session
 from app.core.config import Settings
 from app.core.database.services import get_db
 
-from app.core.database.schemas import UserBase
 from app.modules.users.services import UserService
 
 
@@ -32,19 +31,18 @@ class AuthService:
     ):
 
         form_password = form_data.password.encode("utf-8")
-        user = await self.user_service.get_user_by_username(form_data.username, self.db)
+        user = await self.user_service.get_user_by_email(form_data.username, self.db)
         if not user:
-            raise HTTPException(
-                status_code=400, detail="Incorrect username or password"
-            )
+            raise HTTPException(status_code=400, detail="Incorrect email or password")
         hashed_password = user.password
 
         if bcrypt.checkpw(form_password, hashed_password.encode("utf-8")):
             payload = {
                 "sub": user.id,
+                "email": user.email,
                 "name": user.name,
                 "last_name": user.last_name,
-                "email": user.email,
+                "phone": user.phone,
             }
             return {
                 "access_token": await self.__create_token(payload),

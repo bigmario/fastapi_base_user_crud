@@ -4,8 +4,8 @@ from fastapi import status, Body, BackgroundTasks, Depends
 from fastapi.exceptions import HTTPException
 from fastapi.encoders import jsonable_encoder
 
+from app.modules.users.schemas import User, UserCreate, UserUpdate
 from app.modules.users.repositories import UserRepo
-from app.core.database.schemas import User, UserCreate, UserUpdate
 
 
 class UserService:
@@ -13,9 +13,9 @@ class UserService:
         self.userRepo = userRepo
 
     async def create_user(self, item_request: UserCreate, db: Session):
-        db_item = self.userRepo.fetch_by_name(db, name=item_request.name)
+        db_item = self.userRepo.fetch_by_email(db, email=item_request.email)
         if db_item:
-            raise HTTPException(status_code=400, detail="Item already exists!")
+            raise HTTPException(status_code=400, detail="User already exists!")
 
         return await self.userRepo.create(db, item_request)
 
@@ -32,12 +32,8 @@ class UserService:
         else:
             return self.userRepo.fetch_all(db)
 
-    async def get_user_by_username(self, username: str, db: Session):
-        db_item = self.userRepo.fetch_by_username(db, username)
-        if not db_item:
-            raise HTTPException(
-                status_code=status.HTTP_404_NOT_FOUND, detail="Username not found!"
-            )
+    async def get_user_by_email(self, email: str, db: Session):
+        db_item = self.userRepo.fetch_by_email(db, email)
         return db_item
 
     async def update_user(self, user_id: int, db: Session, item_request: UserUpdate):

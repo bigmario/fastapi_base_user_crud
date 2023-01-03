@@ -5,18 +5,18 @@ from sqlalchemy.orm import Session
 from fastapi.exceptions import HTTPException
 
 import app.core.database.models.db_models as models
-import app.core.database.schemas.db_schemas as schemas
+import app.modules.users.schemas.users_schemas as schemas
 
 
 class UserRepo:
     async def create(self, db: Session, user: schemas.UserCreate):
-
         salt = bcrypt.gensalt()
         db_user = models.User(
-            username=user.username,
-            password=bcrypt.hashpw(user.password.encode("utf-8"), salt),
+            email=user.email,
             name=user.name,
             last_name=user.last_name,
+            phone=user.phone,
+            password=bcrypt.hashpw(user.password.encode("utf-8"), salt),
         )
         db_user.password = db_user.password.decode("utf-8")
         db.add(db_user)
@@ -30,8 +30,8 @@ class UserRepo:
     def fetch_by_name(self, db: Session, name):
         return db.query(models.User).filter(models.User.name == name).first()
 
-    def fetch_by_username(self, db: Session, username):
-        return db.query(models.User).filter(models.User.username == username).first()
+    def fetch_by_email(self, db: Session, email):
+        return db.query(models.User).filter(models.User.email == email).first()
 
     def fetch_all(self, db: Session, skip: int = 0, limit: int = 100):
         return db.query(models.User).offset(skip).limit(limit).all()
