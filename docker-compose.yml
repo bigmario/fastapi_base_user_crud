@@ -1,5 +1,20 @@
 version: '3'
 services:
+  api:
+    build:
+      context: ./
+      dockerfile: Dockerfile
+    command: sh -c "python main.py"
+    ports:
+      - 8000:8000
+    networks:
+      - main-network
+    volumes:
+      - .:/code
+    depends_on:
+      - postgres
+    restart: always
+    
   postgres:
     image: postgres:14.1-alpine
     ports:
@@ -14,21 +29,6 @@ services:
       - main-network
     env_file:
       - .env
-    restart: always
-
-  api:
-    build:
-      context: ./
-      dockerfile: Dockerfile
-    command: sh -c "python main.py"
-    ports:
-      - 8000:8000
-    networks:
-      - main-network
-    volumes:
-      - .:/code
-    depends_on:
-      - postgres
     restart: always
   
 volumes:
