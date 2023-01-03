@@ -33,8 +33,7 @@ async def create_user(
     try:
         return await userService.create_user(item_request, db)
     except Exception as e:
-        return e
-        # raise HTTPException(status_code=e.status_code, detail=e.detail)
+        raise HTTPException(status_code=e.status_code, detail=e.detail)
 
 
 @users_router.get(

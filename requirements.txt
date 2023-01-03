@@ -7,3 +7,5 @@ bcrypt
 python-multipart
 pyjwt
 fastapi-pagination
+email-validator
+fastapi-mail
