@@ -83,7 +83,6 @@ async def get_user_by_id(
     response_model=User,
     response_model_exclude_unset=True,
     status_code=status.HTTP_200_OK,
-    # dependencies=[Depends(oauth2_scheme)],
     dependencies=[Depends(JWTGuard())],
 )
 async def update_user(
@@ -106,7 +105,6 @@ async def update_user(
     response_model=User,
     response_model_exclude_unset=True,
     status_code=status.HTTP_200_OK,
-    # dependencies=[Depends(oauth2_scheme)],
     dependencies=[Depends(JWTGuard())],
 )
 async def delete_user(
