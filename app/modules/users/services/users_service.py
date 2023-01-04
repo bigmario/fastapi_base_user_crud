@@ -32,6 +32,15 @@ class UserService:
         else:
             return self.userRepo.fetch_all(db)
 
+    async def get_user_by_id(self, user_id: str, db: Session):
+        db_item = self.userRepo.fetch_by_id(db, user_id)
+        if not db_item:
+            raise HTTPException(
+                status_code=status.HTTP_404_NOT_FOUND, detail="User Id not found!"
+            )
+        else:
+            return db_item
+
     async def get_user_by_email(self, email: str, db: Session):
         db_item = self.userRepo.fetch_by_email(db, email)
         return db_item

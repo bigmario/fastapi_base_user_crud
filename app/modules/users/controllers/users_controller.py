@@ -57,6 +57,26 @@ async def get_all_users(
         raise HTTPException(status_code=e.status_code, detail=e.detail)
 
 
+@users_router.get(
+    path="/users/{user_id}",
+    response_model=User,
+    response_model_exclude_unset=True,
+    status_code=status.HTTP_200_OK,
+)
+async def get_user_by_id(
+    user_id: str = Path(...),
+    db: Session = Depends(get_db),
+    userService: UserService = Depends(),
+):
+    """
+    Get one User by Id
+    """
+    try:
+        return await userService.get_user_by_id(user_id, db)
+    except Exception as e:
+        raise HTTPException(status_code=e.status_code, detail=e.detail)
+
+
 @users_router.patch(
     path="/users/{user_id}",
     response_model=User,
