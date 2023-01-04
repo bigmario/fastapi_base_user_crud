@@ -38,7 +38,7 @@ async def create_user(
 
 @users_router.get(
     path="/users",
-    response_model=Page[Any],
+    response_model=Page[User],
     response_model_exclude_unset=True,
     status_code=status.HTTP_200_OK,
     dependencies=[Depends(JWTGuard())],
