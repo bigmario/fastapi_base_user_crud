@@ -3,10 +3,12 @@ from fastapi.responses import JSONResponse
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi_pagination import add_pagination
 
+
 from app.modules.auth.controllers import auth_router
 from app.modules.users.controllers import users_router
 
-from app.core.database import create_db
+from app.core.database.seeder import seed_database
+from app.core.database import create_db, get_db
 
 
 app = FastAPI()
@@ -36,6 +38,10 @@ app.include_router(users_router)
 @app.on_event("startup")
 async def start_db():
     create_db()
+    try:
+        await seed_database()
+    except:
+        pass
 
 
 @app.get(path="/", summary="Index", tags=["Index"], status_code=status.HTTP_200_OK)
