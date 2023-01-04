@@ -41,7 +41,7 @@ async def start_db():
     try:
         await seed_database()
     except:
-        pass
+        return "[INFO]: Database already seeded"
 
 
 @app.get(path="/", summary="Index", tags=["Index"], status_code=status.HTTP_200_OK)
