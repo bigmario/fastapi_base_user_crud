@@ -1,4 +1,3 @@
-from typing import List, Any
 from fastapi import Body, APIRouter, status, Depends, Query, Path
 from fastapi.exceptions import HTTPException
 from fastapi_pagination import Page, paginate
@@ -6,14 +5,13 @@ from fastapi_pagination import Page, paginate
 from sqlalchemy.orm import Session
 
 from app.core.database.services import get_db
+from app.core.middlewares import JWTGuard
+
 from app.modules.auth.services import oauth2_scheme
 from app.modules.users.schemas import User, UserCreate, UserUpdate
 from app.modules.users.services import UserService
 
-
-users_router = APIRouter(
-    tags=["Users"],
-)
+users_router = APIRouter(tags=["Users"])
 
 
 @users_router.post(
@@ -21,6 +19,7 @@ users_router = APIRouter(
     response_model=User,
     response_model_exclude_unset=True,
     status_code=status.HTTP_201_CREATED,
+    dependencies=[Depends(oauth2_scheme), Depends(JWTGuard())],
 )
 async def create_user(
     item_request: UserCreate = Body(...),
@@ -41,6 +40,7 @@ async def create_user(
     response_model=Page[User],
     response_model_exclude_unset=True,
     status_code=status.HTTP_200_OK,
+    dependencies=[Depends(JWTGuard())],
 )
 async def get_all_users(
     name: str = Query(default=None),
@@ -62,6 +62,7 @@ async def get_all_users(
     response_model=User,
     response_model_exclude_unset=True,
     status_code=status.HTTP_200_OK,
+    dependencies=[Depends(JWTGuard())],
 )
 async def get_user_by_id(
     user_id: str = Path(...),
@@ -82,7 +83,8 @@ async def get_user_by_id(
     response_model=User,
     response_model_exclude_unset=True,
     status_code=status.HTTP_200_OK,
-    dependencies=[Depends(oauth2_scheme)],
+    # dependencies=[Depends(oauth2_scheme)],
+    dependencies=[Depends(JWTGuard())],
 )
 async def update_user(
     user_id: int = Path(...),
@@ -104,7 +106,8 @@ async def update_user(
     response_model=User,
     response_model_exclude_unset=True,
     status_code=status.HTTP_200_OK,
-    dependencies=[Depends(oauth2_scheme)],
+    # dependencies=[Depends(oauth2_scheme)],
+    dependencies=[Depends(JWTGuard())],
 )
 async def delete_user(
     user_id: int = Path(...),
