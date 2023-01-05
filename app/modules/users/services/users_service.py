@@ -32,7 +32,7 @@ class UserService:
         else:
             return self.userRepo.fetch_all(db)
 
-    async def get_user_by_id(self, user_id: str, db: Session):
+    async def get_user_by_id(self, user_id: int, db: Session):
         db_item = self.userRepo.fetch_by_id(db, user_id)
         if not db_item:
             raise HTTPException(

@@ -13,6 +13,7 @@ class User(Base):
     last_name = Column(String(540), nullable=False)
     phone = Column(String(540), nullable=False)
     password = Column(String(1024), nullable=False)
+    recovery_token = Column(String(1024), nullable=True)
 
     def __repr__(self):
         return "Users(id=%d, email=%s, name=%s, last_name=%s, email=%s, phone=%s)" % (

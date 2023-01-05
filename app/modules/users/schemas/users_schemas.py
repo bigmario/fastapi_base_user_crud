@@ -30,6 +30,8 @@ class UserUpdate(BaseModel):
     name: Optional[str] = Field(default=None)
     last_name: Optional[str] = Field(default=None)
     phone: Optional[str] = Field(default=None)
+    recovery_token: Optional[str] = Field(default=None)
+    password: Optional[str] = Field(default=None)
 
     class Config:
         exclude_unset = True

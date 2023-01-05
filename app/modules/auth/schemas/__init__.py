@@ -1,1 +1,1 @@
-from .auth_schemas import LoginResponse
+from .auth_schemas import LoginResponse, RecoveryBody, ResetPasswordBody
