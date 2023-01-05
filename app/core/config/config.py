@@ -4,6 +4,7 @@ from pydantic import BaseSettings
 
 class Settings(BaseSettings):
     host: str
+    port: int
     log_level: str
     reload: int
     db_name: str
