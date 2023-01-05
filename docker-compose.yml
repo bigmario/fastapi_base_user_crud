@@ -4,9 +4,12 @@ services:
     build:
       context: ./
       dockerfile: Dockerfile
-    command: sh -c "python main.py"
+    command: ["./wait-for-postgres.sh", "postgres:5432", "--", "python", "main.py"]
+    # command: sh -c "python main.py"
     ports:
       - 8000:8000
+    environment:
+      POSTGRES_PASSWORD: ${DB_PASSWORD}
     networks:
       - main-network
     volumes:
