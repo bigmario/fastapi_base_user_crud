@@ -17,19 +17,23 @@ seeder = ResolvingSeeder(db)
 
 
 async def seed_database():
-    salt = bcrypt.gensalt()
-    hashed_password = bcrypt.hashpw("123456789".encode("utf-8"), salt)
+    try:
+        salt = bcrypt.gensalt()
+        hashed_password = bcrypt.hashpw(conf.admin_password.encode("utf-8"), salt)
 
-    user = {
-        "target_class": "app.core.database.models.db_models:User",
-        "data": {
-            "email": "admin@mail.com",
-            "name": "Admin",
-            "last_name": "Admin",
-            "phone": "+58-000000000",
-            "password": hashed_password.decode("utf-8"),
-        },
-    }
-    seeder.load_entities_from_data_dict(user)
-    db.commit()
-    db.close()
+        user = {
+            "target_class": "app.core.database.models.db_models:User",
+            "data": {
+                "email": "admin@mail.com",
+                "name": "Admin",
+                "last_name": "Admin",
+                "phone": "+58-000000000",
+                "password": hashed_password.decode("utf-8"),
+            },
+        }
+        seeder.load_entities_from_data_dict(user)
+        db.commit()
+        db.close()
+    except :
+        raise Exception("[INFO]: Database already seeded")
+    

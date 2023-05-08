@@ -40,8 +40,8 @@ async def start_db():
     create_db()
     try:
         await seed_database()
-    except:
-        return "[INFO]: Database already seeded"
+    except Exception as e:
+        print(f"{e}")
 
 
 @app.get(path="/", summary="Index", tags=["Index"], status_code=status.HTTP_200_OK)

@@ -13,6 +13,7 @@ class Settings(BaseSettings):
     db_host: str
     db_port: int
     jwt_secret: str
+    admin_password: str
 
     class Config:
         env_file = ".env"
