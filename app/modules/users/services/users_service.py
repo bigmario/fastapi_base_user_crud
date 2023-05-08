@@ -1,10 +1,8 @@
 from sqlalchemy.orm import Session
-from typing import List, Optional
-from fastapi import status, Body, BackgroundTasks, Depends
+from fastapi import status, Depends
 from fastapi.exceptions import HTTPException
-from fastapi.encoders import jsonable_encoder
 
-from app.modules.users.schemas import User, UserCreate, UserUpdate
+from app.modules.users.schemas import UserCreate, UserUpdate
 from app.modules.users.repositories import UserRepo
 
 

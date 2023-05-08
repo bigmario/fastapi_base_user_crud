@@ -1,5 +1,5 @@
 import os
-from fastapi import Body, status, BackgroundTasks
+from fastapi import BackgroundTasks
 
 from fastapi_mail import FastMail, MessageSchema, ConnectionConfig
 
@@ -19,8 +19,6 @@ class EmailService:
             MAIL_PORT=settings.mail_port,
             MAIL_SERVER=settings.mail_server,
             MAIL_FROM_NAME=settings.mail_from_name,
-            MAIL_STARTTLS=bool(settings.mail_use_tls),
-            MAIL_SSL_TLS=bool(settings.mail_use_ssl),
             USE_CREDENTIALS=True,
             TEMPLATE_FOLDER=f"{os.getcwd()}/app/modules/mail/templates",
         )

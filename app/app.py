@@ -8,7 +8,7 @@ from app.modules.auth.controllers import auth_router
 from app.modules.users.controllers import users_router
 
 from app.core.database.seeder import seed_database
-from app.core.database import create_db, get_db
+from app.core.database import create_db
 
 
 app = FastAPI()

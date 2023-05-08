@@ -4,7 +4,6 @@ from fastapi import Depends, status, BackgroundTasks
 from fastapi.security import OAuth2PasswordBearer, OAuth2PasswordRequestForm
 from fastapi.exceptions import HTTPException
 from fastapi.responses import JSONResponse
-from fastapi.encoders import jsonable_encoder
 
 from sqlalchemy.orm import Session
 from app.core.config import Settings
