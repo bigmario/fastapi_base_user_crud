@@ -44,7 +44,7 @@ def test_read_user(test_db):
     user_id = response.json()["id"]
 
     # When
-    response = client.get(f"/users/{user_id}", headers={"Authorization": "Bearer " + create_token(user)})
+    response = client.get(f"/users/{user_id}")
 
     # Then
     assert response.status_code == 200
