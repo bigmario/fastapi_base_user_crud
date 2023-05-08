@@ -1,7 +1,14 @@
-
 from app.tests.db_mock import test_db, test_client, create_token
 
 client = test_client
+
+user = {
+        "email": "testuser@mail.com", 
+        "name": "testpassword",
+        "last_name": "testpassword",
+        "phone": "123456",
+        "password": "12345678"
+    }
 
 def test_home(test_db):
     """
@@ -15,15 +22,6 @@ def test_home(test_db):
     }
 
 def test_create_user(test_db):
-    # Given
-    user = {
-        "email": "testuser@mail.com", 
-        "name": "testpassword",
-        "last_name": "testpassword",
-        "phone": "123456",
-        "password": "12345678"
-    }
-
     # When
     response = client.post("/users/", json=user, headers={"Authorization": "Bearer " + create_token(user)})
 
@@ -33,13 +31,6 @@ def test_create_user(test_db):
     
 def test_read_user(test_db):
     # Given
-    user = {
-        "email": "testuser@mail.com", 
-        "name": "testpassword",
-        "last_name": "testpassword",
-        "phone": "123456",
-        "password": "12345678"
-    }
     response = client.post("/users/", json=user, headers={"Authorization": "Bearer " + create_token(user)})
     user_id = response.json()["id"]
 
@@ -52,13 +43,6 @@ def test_read_user(test_db):
     
 def test_update_user(test_db):
     # Given
-    user = {
-        "email": "testuser@mail.com", 
-        "name": "testpassword",
-        "last_name": "testpassword",
-        "phone": "123456",
-        "password": "12345678"
-    }
     response = client.post("/users/", json=user, headers={"Authorization": "Bearer " + create_token(user)})
     user_id = response.json()["id"]
     update_user = {
@@ -74,13 +58,6 @@ def test_update_user(test_db):
     
 def test_delete_user(test_db):
     # Given
-    user = {
-        "email": "testuser@mail.com", 
-        "name": "testpassword",
-        "last_name": "testpassword",
-        "phone": "123456",
-        "password": "12345678"
-    }
     response = client.post("/users/", json=user, headers={"Authorization": "Bearer " + create_token(user)})
     user_id = response.json()["id"]
 

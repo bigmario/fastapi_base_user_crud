@@ -7,7 +7,8 @@ from jwt import encode
 
 from app.core.database.services.db_service import Base
 
-from app.app import app, get_db
+from app.app import app
+from app.core.database import get_db
 
 from app.core.config import Settings
 
