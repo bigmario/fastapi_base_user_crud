@@ -1,5 +1,4 @@
 
-import pytest
 from app.tests.db_mock import test_db, test_client, create_token
 
 client = test_client
