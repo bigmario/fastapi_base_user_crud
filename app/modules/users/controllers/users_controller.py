@@ -32,7 +32,7 @@ async def create_user(
     """
     try:
         return await userService.create_user(item_request, db)
-    except Exception as e:
+    except HTTPException as e:
         raise HTTPException(status_code=e.status_code, detail=e.detail)
 
 
@@ -41,7 +41,7 @@ async def create_user(
     response_model=Page[User],
     response_model_exclude_unset=True,
     status_code=status.HTTP_200_OK,
-    dependencies=[Depends(JWTGuard())],
+    dependencies=[],
 )
 async def get_all_users(
     name: str = Query(default=None),
@@ -54,7 +54,7 @@ async def get_all_users(
     try:
         users = await userService.get_users(name, db)
         return paginate(users)
-    except Exception as e:
+    except HTTPException as e:
         raise HTTPException(status_code=e.status_code, detail=e.detail)
 
 
@@ -63,7 +63,7 @@ async def get_all_users(
     response_model=User,
     response_model_exclude_unset=True,
     status_code=status.HTTP_200_OK,
-    dependencies=[Depends(JWTGuard())],
+    dependencies=[],
 )
 async def get_user_by_id(
     user_id: str = Path(...),
@@ -84,7 +84,7 @@ async def get_user_by_id(
     response_model=User,
     response_model_exclude_unset=True,
     status_code=status.HTTP_200_OK,
-    dependencies=[Depends(JWTGuard())],
+    dependencies=[Depends(oauth2_scheme), Depends(JWTGuard())],
 )
 async def update_user(
     user_id: int = Path(...),
@@ -106,7 +106,7 @@ async def update_user(
     response_model=User,
     response_model_exclude_unset=True,
     status_code=status.HTTP_200_OK,
-    dependencies=[Depends(JWTGuard())],
+    dependencies=[Depends(oauth2_scheme), Depends(JWTGuard())],
 )
 async def delete_user(
     user_id: int = Path(...),
