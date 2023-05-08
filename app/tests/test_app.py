@@ -3,12 +3,12 @@ from app.tests.db_mock import test_db, test_client, create_token
 client = test_client
 
 user = {
-        "email": "testuser@mail.com", 
-        "name": "testpassword",
-        "last_name": "testpassword",
-        "phone": "123456",
-        "password": "12345678"
-    }
+    "email": "testuser@mail.com", 
+    "name": "testpassword",
+    "last_name": "testpassword",
+    "phone": "123456",
+    "password": "12345678"
+}
 
 def test_home(test_db):
     """
