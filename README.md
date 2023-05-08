@@ -1,7 +1,7 @@
 # FastAPI Base User CRUD
 FastAPI REST API for user management with email/password & JWT authentication
 
-### Seployment
+### Deployment
 ```
 $ docker compose up --build -d
 ```
