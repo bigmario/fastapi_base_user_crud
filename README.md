@@ -3,6 +3,7 @@ FastAPI REST API for user management with email/password & JWT authentication
 <br>
 Github actions support (Linting with flake8 y testing with pytest)
 
+
 ### Deployment
 ```
 $ docker compose up --build -d
@@ -14,5 +15,11 @@ $ docker compose up --build -d
 ### Testing
 ```bash
 $ pytest -vv
+```
+
+### Testing Coverage
+```bash
+$ coverage run -m pytest 
+$ coverage report 
 ```
 
