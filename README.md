@@ -1,5 +1,7 @@
 # FastAPI Base User CRUD
 FastAPI REST API for user management with email/password & JWT authentication
+<br>
+Github actions support (Linting with flake8 y testing with pytest)
 
 ### Deployment
 ```
