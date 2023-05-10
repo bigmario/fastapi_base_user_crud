@@ -22,7 +22,7 @@ def create_token(data: dict, expires_delta: timedelta | None = None) -> str:
         expire = datetime.utcnow() + timedelta(minutes=15)
     to_encode.update({"exp": expire})
     encoded_token: str = encode(
-        payload=to_encode, key='secret', algorithm="HS256"
+        payload=to_encode, key=config.jwt_secret, algorithm="HS256"
     )
     return encoded_token
 
