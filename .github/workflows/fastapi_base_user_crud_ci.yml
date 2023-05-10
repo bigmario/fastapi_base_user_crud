@@ -13,6 +13,19 @@ on:
   # Allows you to run this workflow manually from the Actions tab
   workflow_dispatch:
 
+env:
+  HOST: 0.0.0.0
+  PORT: 8000
+  LOG_LEVEL: info
+  RELOAD: 0
+  DB_NAME: test
+  DB_USER: admin
+  DB_PASSWORD: admin
+  DB_HOST: postgres
+  DB_PORT: 5432
+  ADMIN_PASSWORD: 123456789
+  JWT_SECRET: secret
+
 # A workflow run is made up of one or more jobs that can run sequentially or in parallel
 jobs:
   # This workflow contains a single job called "build"
