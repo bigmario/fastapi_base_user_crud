@@ -25,6 +25,13 @@ env:
   DB_PORT: 5432
   ADMIN_PASSWORD: 123456789
   JWT_SECRET: secret
+  MAIL_USERNAME: noone
+  MAIL_PASSWORD: noone
+  MAIL_FROM: noone
+  MAIL_TO: noone
+  MAIL_PORT: 2525
+  MAIL_SERVER: none
+  MAIL_FROM_NAME: none
 
 # A workflow run is made up of one or more jobs that can run sequentially or in parallel
 jobs:
