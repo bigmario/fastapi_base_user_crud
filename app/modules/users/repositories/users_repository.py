@@ -1,60 +1,71 @@
 import bcrypt
-from sqlalchemy.orm import Session
+from typing import Any, List
+from prisma import Prisma
+from pydantic import parse_obj_as
 
-
+from fastapi import Depends
 from fastapi.exceptions import HTTPException
+from fastapi.responses import JSONResponse
 
-import app.core.database.models.db_models as models
 import app.modules.users.schemas.users_schemas as schemas
 
 
 class UserRepo:
-    async def create(self, db: Session, user: schemas.UserCreate):
-        salt = bcrypt.gensalt()
-        db_user = models.User(
-            email=user.email,
-            name=user.name,
-            last_name=user.last_name,
-            phone=user.phone,
-            password=bcrypt.hashpw(user.password.encode("utf-8"), salt),
+    async def create(self, user: schemas.UserCreate):
+        pass
+
+    async def fetch_by_id(self, _id):
+        db = Prisma()
+        await db.connect()
+        user = await db.user.find_unique(
+            where={"id": _id},
         )
-        db_user.password = db_user.password.decode("utf-8")
-        db.add(db_user)
-        db.commit()
-        db.refresh(db_user)
-        return db_user
+        await db.disconnect()
+        return user
 
-    def fetch_by_id(self, db: Session, _id):
-        return db.query(models.User).filter(models.User.id == _id).first()
+    async def fetch_by_name(self, name):
+        db = Prisma()
+        await db.connect()
+        user = await db.user.find_first(
+            where={"name": name}, include={"session": {"include": {"role": True}}}
+        )
+        await db.disconnect()
+        return user
 
-    def fetch_by_name(self, db: Session, name):
-        return db.query(models.User).filter(models.User.name == name).first()
+    async def fetch_by_email(self, email):
+        db = Prisma()
+        await db.connect()
+        user = await db.session.find_first(
+            where={"email": email}, include={"user": True, "role": True}
+        )
+        await db.disconnect()
+        return user
 
-    def fetch_by_email(self, db: Session, email):
-        return db.query(models.User).filter(models.User.email == email).first()
+    async def fetch_all(self, skip: int = 0, limit: int = 100):
+        db = Prisma()
+        await db.connect()
+        users = await db.user.find_many(skip=skip, take=limit)
+        await db.disconnect()
+        return users
 
-    def fetch_all(self, db: Session, skip: int = 0, limit: int = 100):
-        return db.query(models.User).offset(skip).limit(limit).all()
+    async def delete(self, user_id):
+        db = Prisma()
+        await db.connect()
+        users = await db.user.delete(user_id)
+        await db.disconnect()
+        return users
 
-    def delete(self, db: Session, user_id):
-        db_user = db.query(models.User).filter_by(id=user_id).first()
+    async def update(self, user_id: int, user_data: schemas.UserUpdate):
+        # db = Prisma()
+        # await db.connect()
+        return user_data
+        # user = await db.user.update(
+        #     where={
+        #         'id': user_id
+        #     },
+        #     data={
 
-        if not db_user:
-            raise HTTPException(status_code=404, detail="Item not exists!")
-
-        db.delete(db_user)
-        db.commit()
-        return db_user
-
-    def update(self, db: Session, user_id, user_data: schemas.UserUpdate):
-        db_query = db.query(models.User).filter(models.User.id == user_id)
-        db_item = db_query.first()
-
-        if not db_item:
-            raise HTTPException(status_code=404, detail="Item not exists!")
-
-        data_dict = user_data.dict(exclude_unset=True)
-        db_query.update(data_dict, synchronize_session=False)
-        db.commit()
-        db.refresh(db_item)
-        return db_item
+        #     }
+        # )
+        # await db.disconnect()
+        # return user

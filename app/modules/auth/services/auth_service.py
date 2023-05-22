@@ -1,13 +1,12 @@
 import bcrypt
+from prisma import Prisma
 
 from fastapi import Depends, status, BackgroundTasks
 from fastapi.security import OAuth2PasswordBearer, OAuth2PasswordRequestForm
 from fastapi.exceptions import HTTPException
 from fastapi.responses import JSONResponse
 
-from sqlalchemy.orm import Session
 from app.core.config import Settings
-from app.core.database.services import get_db
 from app.core.libs import create_token, validate_token
 
 from app.modules.users.schemas import UserUpdate
@@ -27,20 +26,17 @@ class AuthService:
         background_tasks: BackgroundTasks,
         user_service: UserService = Depends(),
         mail_service: EmailService = Depends(),
-        db: Session = Depends(get_db),
     ):
         self.background_tasks = background_tasks
         self.user_service = user_service
         self.mail_service = mail_service
-        self.db = db
 
     async def login(
         self,
         form_data: OAuth2PasswordRequestForm,
     ):
-
         form_password = form_data.password.encode("utf-8")
-        user = await self.user_service.get_user_by_email(form_data.username, self.db)
+        user = await self.user_service.get_user_by_email(form_data.username)
         if not user:
             raise HTTPException(status_code=400, detail="Incorrect email or password")
         hashed_password = user.password
@@ -49,9 +45,8 @@ class AuthService:
             payload = {
                 "sub": user.id,
                 "email": user.email,
-                "name": user.name,
-                "last_name": user.last_name,
-                "phone": user.phone,
+                "name": user.user.name,
+                "last_name": user.user.lastName,
             }
             return {
                 "access_token": await create_token(payload),
@@ -63,16 +58,16 @@ class AuthService:
             )
 
     async def send_recovery(self, body: RecoveryBody):
-        user = await self.user_service.get_user_by_email(body.email, self.db)
+        user = await self.user_service.get_user_by_email(body.email)
         if not user:
             raise HTTPException(status_code=404, detail="Not Found")
 
-        payload = {"sub": user.id}
+        payload = {"sub": user.user.id}
         recovery_token = await create_token(payload)
         link = f"http://myfrontend.com/recovery?token={recovery_token}"
 
         await self.user_service.update_user(
-            user.id, self.db, UserUpdate(recovery_token=recovery_token)
+            user.id, UserUpdate(recovery_token=recovery_token)
         )
 
         body = Email(
@@ -94,7 +89,9 @@ class AuthService:
     async def reset_password(self, body: ResetPasswordBody):
         try:
             payload = await validate_token(body.token)
-            user = await self.user_service.get_user_by_id(payload["sub"], self.db)
+            user = await self.user_service.get_user_by_id(
+                payload["sub"],
+            )
             if user.recovery_token != body.token:
                 raise HTTPException(status_code=401, detail="Unauthorized")
 
@@ -102,7 +99,7 @@ class AuthService:
             hash = bcrypt.hashpw(body.new_password.encode("utf-8"), salt)
 
             await self.user_service.update_user(
-                user.id, self.db, UserUpdate(password=hash, recovery_token=None)
+                user.id, UserUpdate(password=hash, recovery_token=None)
             )
 
             return JSONResponse(

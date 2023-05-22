@@ -1,11 +1,9 @@
 from typing import Any
+from prisma import Prisma
 from fastapi import Body, APIRouter, status, Depends, Query, Path
 from fastapi.exceptions import HTTPException
 from fastapi_pagination import Page, paginate
 
-from sqlalchemy.orm import Session
-
-from app.core.database.services import get_db
 from app.core.middlewares import JWTGuard
 
 from app.modules.auth.services import oauth2_scheme
@@ -24,35 +22,33 @@ users_router = APIRouter(tags=["Users"])
 )
 async def create_user(
     item_request: UserCreate = Body(...),
-    db: Session = Depends(get_db),
     userService: UserService = Depends(),
 ):
     """
     Create an User and store it in the database
     """
     try:
-        return await userService.create_user(item_request, db)
+        return await userService.create_user(item_request)
     except HTTPException as e:
         raise HTTPException(status_code=e.status_code, detail=e.detail)
 
 
 @users_router.get(
     path="/users",
-    response_model=Page[User],
+    response_model=Page[Any],
     response_model_exclude_unset=True,
     status_code=status.HTTP_200_OK,
     dependencies=[],
 )
 async def get_all_users(
     name: str = Query(default=None),
-    db: Session = Depends(get_db),
     userService: UserService = Depends(),
 ):
     """
     Get all the Users stored in database
     """
     try:
-        users = await userService.get_users(name, db)
+        users = await userService.get_users(name)
         return paginate(users)
     except HTTPException as e:
         raise HTTPException(status_code=e.status_code, detail=e.detail)
@@ -67,14 +63,13 @@ async def get_all_users(
 )
 async def get_user_by_id(
     user_id: str = Path(...),
-    db: Session = Depends(get_db),
     userService: UserService = Depends(),
 ):
     """
     Get one User by Id
     """
     try:
-        return await userService.get_user_by_id(user_id, db)
+        return await userService.get_user_by_id(user_id)
     except Exception as e:
         raise HTTPException(status_code=e.status_code, detail=e.detail)
 
@@ -89,14 +84,13 @@ async def get_user_by_id(
 async def update_user(
     user_id: int = Path(...),
     item_request: UserUpdate = Body(...),
-    db: Session = Depends(get_db),
     userService: UserService = Depends(),
 ):
     """
     Update an User in the database
     """
     try:
-        return await userService.update_user(user_id, db, item_request)
+        return await userService.update_user(user_id, item_request)
     except Exception as e:
         raise HTTPException(status_code=e.status_code, detail=e.detail)
 
@@ -110,13 +104,12 @@ async def update_user(
 )
 async def delete_user(
     user_id: int = Path(...),
-    db: Session = Depends(get_db),
     userService: UserService = Depends(),
 ):
     """
     Delete an User in the database
     """
     try:
-        return await userService.delete_user(user_id, db)
+        return await userService.delete_user(user_id)
     except Exception as e:
         raise HTTPException(status_code=e.status_code, detail=e.detail)

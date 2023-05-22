@@ -1,4 +1,3 @@
-from sqlalchemy.orm import Session
 from fastapi import status, Depends
 from fastapi.exceptions import HTTPException
 
@@ -10,17 +9,17 @@ class UserService:
     def __init__(self, userRepo: UserRepo = Depends()):
         self.userRepo = userRepo
 
-    async def create_user(self, item_request: UserCreate, db: Session):
-        db_item = self.userRepo.fetch_by_email(db, email=item_request.email)
+    async def create_user(self, item_request: UserCreate):
+        db_item = await self.userRepo.fetch_by_email(email=item_request.email)
         if db_item:
             raise HTTPException(status_code=400, detail="User already exists!")
 
-        return await self.userRepo.create(db, item_request)
+        return await self.userRepo.create(item_request)
 
-    async def get_users(self, name: str, db: Session):
+    async def get_users(self, name: str):
         if name:
             items = []
-            db_item = self.userRepo.fetch_by_name(db, name)
+            db_item = await self.userRepo.fetch_by_name(name)
             if not db_item:
                 raise HTTPException(
                     status_code=status.HTTP_404_NOT_FOUND, detail="Item not found!"
@@ -28,10 +27,10 @@ class UserService:
             items.append(db_item)
             return items
         else:
-            return self.userRepo.fetch_all(db)
+            return await self.userRepo.fetch_all()
 
-    async def get_user_by_id(self, user_id: int, db: Session):
-        db_item = self.userRepo.fetch_by_id(db, user_id)
+    async def get_user_by_id(self, user_id: int):
+        db_item = await self.userRepo.fetch_by_id(user_id)
         if not db_item:
             raise HTTPException(
                 status_code=status.HTTP_404_NOT_FOUND, detail="User Id not found!"
@@ -39,12 +38,12 @@ class UserService:
         else:
             return db_item
 
-    async def get_user_by_email(self, email: str, db: Session):
-        db_item = self.userRepo.fetch_by_email(db, email)
+    async def get_user_by_email(self, email: str):
+        db_item = await self.userRepo.fetch_by_email(email)
         return db_item
 
-    async def update_user(self, user_id: int, db: Session, item_request: UserUpdate):
-        return self.userRepo.update(db, user_id, item_request)
+    async def update_user(self, user_id: int, item_request: UserUpdate):
+        return await self.userRepo.update(user_id, item_request)
 
-    async def delete_user(self, user_id: int, db: Session):
-        return self.userRepo.delete(db, user_id)
+    async def delete_user(self, user_id: int):
+        return await self.userRepo.delete(user_id)

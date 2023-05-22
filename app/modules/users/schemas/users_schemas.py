@@ -1,4 +1,4 @@
-from typing import Optional
+from typing import Optional, Any
 
 from pydantic import BaseModel, Field, EmailStr
 
@@ -7,7 +7,7 @@ class UserBase(BaseModel):
     email: EmailStr = Field(...)
     name: str = Field(...)
     last_name: str = Field(...)
-    phone: str = Field(...)
+    image: str = Field(...)
 
 
 class UserCreate(UserBase):
@@ -19,19 +19,17 @@ class UserCreate(UserBase):
                 "email": "mail@mail.com",
                 "name": "John",
                 "last_name": "Doe",
-                "phone": "+58-000000000",
+                "image": "+58-000000000",
                 "password": "12345678",
             }
         }
 
 
 class UserUpdate(BaseModel):
-    email: Optional[EmailStr] = Field(default=None)
+    # email: Optional[EmailStr] = Field(default=None)
     name: Optional[str] = Field(default=None)
     last_name: Optional[str] = Field(default=None)
-    phone: Optional[str] = Field(default=None)
-    recovery_token: Optional[str] = Field(default=None)
-    password: Optional[str] = Field(default=None)
+    image: Optional[str] = Field(default=None)
 
     class Config:
         exclude_unset = True
@@ -39,6 +37,9 @@ class UserUpdate(BaseModel):
 
 class User(UserBase):
     id: int = Field(...)
+    createdAt: str = Field(...)
+    updatedAt: str = Field(...)
+    deletedAt: Optional[str] = Field(...)
 
     class Config:
         orm_mode = True

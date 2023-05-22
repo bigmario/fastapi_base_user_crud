@@ -1,0 +1,43 @@
+// database
+generator db {
+  provider             = "prisma-client-py"
+  interface            = "asyncio"
+  recursive_type_depth = -1
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model user {
+  id        Int       @id @default(autoincrement())
+  name      String
+  lastName  String
+  image     String?
+  createdAt DateTime  @default(now())
+  updatedAt DateTime? @updatedAt
+  deletedAt DateTime?
+  session   session?
+}
+
+model session {
+  id            Int       @id @default(autoincrement())
+  email         String    @unique
+  password      String
+  recoveryToken String?
+  role          role?     @relation(fields: [roleId], references: [id])
+  roleId        Int?
+  user          user      @relation(fields: [userId], references: [id], onDelete: Cascade)
+  userId        Int       @unique
+  createdAt     DateTime  @default(now())
+  updatedAt     DateTime? @updatedAt
+  deletedAt     DateTime?
+}
+
+model role {
+  id          Int       @id @default(autoincrement())
+  name        String?
+  description String?
+  session     session[]
+}

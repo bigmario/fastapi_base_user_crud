@@ -7,9 +7,6 @@ from fastapi_pagination import add_pagination
 from app.modules.auth.controllers import auth_router
 from app.modules.users.controllers import users_router
 
-from app.core.database.seeder import seed_database
-from app.core.database import create_db
-
 
 app = FastAPI()
 app.title = "FastAPI Base User CRUD with Authentication"
@@ -33,15 +30,6 @@ app.add_middleware(
 
 app.include_router(auth_router)
 app.include_router(users_router)
-
-
-@app.on_event("startup")
-async def start_db():
-    create_db()
-    try:
-        await seed_database()
-    except Exception as e:
-        print(f"{e}")
 
 
 @app.get(path="/", summary="Index", tags=["Index"], status_code=status.HTTP_200_OK)
