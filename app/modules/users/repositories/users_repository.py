@@ -1,11 +1,7 @@
 import bcrypt
-from typing import Any, List
+from typing import Optional
 from prisma import Prisma
-from pydantic import parse_obj_as
-
-from fastapi import Depends
-from fastapi.exceptions import HTTPException
-from fastapi.responses import JSONResponse
+from prisma.models import user
 
 import app.modules.users.schemas.users_schemas as schemas
 
@@ -21,7 +17,7 @@ class UserRepo:
     async def create(self, user: schemas.UserCreate):
         db = Prisma()
         await db.connect()
-        user = await db.user.create(
+        newUser = await db.user.create(
             data={
                 "name": user.name,
                 "lastName": user.lastName,
@@ -37,7 +33,43 @@ class UserRepo:
             include={"session": True},
         )
         await db.disconnect()
-        return user
+        return newUser
+
+    async def upsert(self, user: schemas.UserCreate, user_id: Optional[int] = None):
+        db = Prisma()
+        await db.connect()
+        newUser = await db.user.upsert(
+            where={"id": user_id},
+            data={
+                "create": {
+                    "name": user.name,
+                    "lastName": user.lastName,
+                    "image": user.image,
+                    "session": {
+                        "create": {
+                            "password": self.set_password(user.password),
+                            "email": user.email,
+                            "roleId": int(user.roleId),
+                        },
+                    },
+                },
+                "update": {
+                    "name": user.name,
+                    "lastName": user.lastName,
+                    "image": user.image,
+                    "session": {
+                        "create": {
+                            "password": self.set_password(user.password),
+                            "email": user.email,
+                            "roleId": int(user.roleId),
+                        },
+                    },
+                },
+            },
+            include={"session": True},
+        )
+        await db.disconnect()
+        return newUser
 
     async def fetch_by_id(self, _id: int):
         db = Prisma()
@@ -49,25 +81,26 @@ class UserRepo:
         return user
 
     async def fetch_by_name(self, name: str):
-        db = Prisma(auto_register=True)
+        db = Prisma()
         await db.connect()
-        user = await db.user.find_first(where={"name": name}, include={"session": True})
-        user.pop()
+        user = await db.user.find_many(
+            where={"name": {"contains": name}}, include={"session": True}
+        )
         await db.disconnect()
         return user
 
     async def fetch_by_email(self, email: str):
-        db = Prisma(auto_register=True)
+        db = Prisma()
         await db.connect()
         user = await db.user.find_first(
-            where={"session": {"is": {"email": {"equals": email}}}},
             include={"session": True},
+            where={"session": {"is": {"email": {"equals": email}}}},
         )
         await db.disconnect()
         return user
 
     async def fetch_all(self, skip: int = 0, limit: int = 100):
-        db = Prisma(auto_register=True)
+        db = Prisma()
         await db.connect()
         users = await db.user.find_many(
             skip=skip,
@@ -78,23 +111,38 @@ class UserRepo:
         return users
 
     async def delete(self, user_id: int):
-        db = Prisma(auto_register=True)
+        db = Prisma()
         await db.connect()
         users = await db.user.delete(where={"id": user_id})
         await db.disconnect()
         return users
 
     async def update(self, user_id: int, user_data: schemas.UserUpdate):
-        # db = Prisma(auto_register=True)
-        # await db.connect()
-        return user_data
-        # user = await db.user.update(
-        #     where={
-        #         'id': user_id
-        #     },
-        #     data={
+        db = Prisma()
+        await db.connect()
+        try:
+            await db.user.update(
+                where={"id": user_id},
+                data={
+                    "name": user_data.name if user_data.name else None,
+                    "lastName": user_data.last_name if user_data.last_name else None,
+                    "image": user_data.image if user_data.image else None,
+                },
+            )
+        except:
+            pass
 
-        #     }
-        # )
-        # await db.disconnect()
-        # return user
+        try:
+            await db.session.update(
+                where={user_id: user_id},
+                data={
+                    "email": user_data.email,
+                    "recoveryToken": user_data.recoveryToken,
+                    "role": {"connect": {"id": user_data.roleId}},
+                },
+            )
+        except:
+            pass
+
+        await db.disconnect()
+        return True

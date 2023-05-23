@@ -9,10 +9,11 @@ from fastapi.responses import JSONResponse
 from app.core.config import Settings
 from app.core.libs import create_token, validate_token
 
-from app.modules.users.schemas import UserUpdate
+from app.modules.users.schemas import UserUpdate, UserSession
 from app.modules.auth.schemas import RecoveryBody, ResetPasswordBody
 from app.modules.mail.schemas import Email, MailBody
 from app.modules.users.services import UserService
+from app.modules.users.repositories import UserRepo
 from app.modules.mail.service import EmailService
 
 
@@ -25,6 +26,7 @@ class AuthService:
         self,
         background_tasks: BackgroundTasks,
         user_service: UserService = Depends(),
+        user_repo: UserRepo = Depends(),
         mail_service: EmailService = Depends(),
     ):
         self.background_tasks = background_tasks
@@ -62,12 +64,13 @@ class AuthService:
         if not user:
             raise HTTPException(status_code=404, detail="Not Found")
 
-        payload = {"sub": user.user.id}
+        payload = {"sub": user.id}
         recovery_token = await create_token(payload)
         link = f"http://myfrontend.com/recovery?token={recovery_token}"
 
         await self.user_service.update_user(
-            user.id, UserUpdate(recovery_token=recovery_token)
+            user.id,
+            UserUpdate(recoveryToken=recovery_token),
         )
 
         body = Email(

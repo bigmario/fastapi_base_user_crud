@@ -2,6 +2,7 @@ import bcrypt
 import asyncio
 
 from prisma import Prisma
+from prisma.errors import UniqueViolationError
 
 
 def set_password(pw: str):
@@ -17,20 +18,24 @@ async def createRoles(client: Prisma):
 
 
 async def createUsers(client: Prisma):
-    await client.user.create(
-        data={
-            "name": "Admin",
-            "lastName": "Admin",
-            "session": {
-                "create": {
-                    "email": "admin@mail.com",
-                    "password": set_password("12345678"),
-                    "roleId": 1,
-                }
+    try:
+        await client.user.create(
+            data={
+                "name": "Admin",
+                "lastName": "Admin",
+                "session": {
+                    "create": {
+                        "email": "admin@mail.com",
+                        "password": set_password("12345678"),
+                        "roleId": 1,
+                    }
+                },
             },
-        },
-    )
-    await client.execute_raw("ALTER SEQUENCE user_id_seq restart 2")
+        )
+        await client.execute_raw("ALTER SEQUENCE user_id_seq restart 2")
+    except UniqueViolationError as e:
+        print(e)
+        pass
 
 
 async def mainSeeder():

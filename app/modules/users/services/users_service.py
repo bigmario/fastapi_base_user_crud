@@ -1,5 +1,8 @@
+from typing import List
 from fastapi import status, Depends
 from fastapi.exceptions import HTTPException
+
+from prisma.models import user
 
 from app.modules.users.schemas import UserCreate, UserUpdate
 from app.modules.users.repositories import UserRepo
@@ -18,14 +21,12 @@ class UserService:
 
     async def get_users(self, name: str):
         if name:
-            items = []
-            db_item = await self.userRepo.fetch_by_name(name)
-            if not db_item:
+            users = await self.userRepo.fetch_by_name(name)
+            if not users:
                 raise HTTPException(
                     status_code=status.HTTP_404_NOT_FOUND, detail="Item not found!"
                 )
-            items.append(db_item)
-            return items
+            return users
         else:
             return await self.userRepo.fetch_all()
 

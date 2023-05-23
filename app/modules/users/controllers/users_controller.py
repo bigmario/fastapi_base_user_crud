@@ -1,5 +1,4 @@
 from typing import Any
-from prisma import Prisma
 from fastapi import Body, APIRouter, status, Depends, Query, Path
 from fastapi.exceptions import HTTPException
 from fastapi_pagination import Page, paginate
@@ -62,7 +61,7 @@ async def get_all_users(
     dependencies=[],
 )
 async def get_user_by_id(
-    user_id: str = Path(...),
+    user_id: int = Path(...),
     userService: UserService = Depends(),
 ):
     """
@@ -70,13 +69,13 @@ async def get_user_by_id(
     """
     try:
         return await userService.get_user_by_id(user_id)
-    except Exception as e:
+    except HTTPException as e:
         raise HTTPException(status_code=e.status_code, detail=e.detail)
 
 
 @users_router.patch(
     path="/users/{user_id}",
-    response_model=User,
+    response_model=bool,
     response_model_exclude_unset=True,
     status_code=status.HTTP_200_OK,
     dependencies=[Depends(oauth2_scheme), Depends(JWTGuard())],
@@ -91,7 +90,7 @@ async def update_user(
     """
     try:
         return await userService.update_user(user_id, item_request)
-    except Exception as e:
+    except HTTPException as e:
         raise HTTPException(status_code=e.status_code, detail=e.detail)
 
 
@@ -110,5 +109,5 @@ async def delete_user(
     """
     try:
         return await userService.delete_user(user_id)
-    except Exception as e:
+    except HTTPException as e:
         raise HTTPException(status_code=e.status_code, detail=e.detail)

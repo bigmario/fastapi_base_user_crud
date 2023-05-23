@@ -4,7 +4,11 @@ services:
     build:
       context: ./
       dockerfile: Dockerfile
-    command: ["./wait-for-postgres.sh", "postgres:5432", "--", "python", "main.py"]
+    # command: ["./wait-for-postgres.sh", "postgres:5432", "--", "python", "main.py"]
+    command: sh -c "./wait-for-postgres.sh postgres:5432 &&
+                    prisma migrate dev --schema=app/core/database/prisma/schema.prisma && 
+                    python app/core/database/prisma/seeder/seed.py && 
+                    python main.py"
     ports:
       - 8000:8000
     environment:
