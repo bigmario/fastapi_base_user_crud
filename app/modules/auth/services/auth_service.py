@@ -39,14 +39,14 @@ class AuthService:
         user = await self.user_service.get_user_by_email(form_data.username)
         if not user:
             raise HTTPException(status_code=400, detail="Incorrect email or password")
-        hashed_password = user.password
+        hashed_password = user.session.password
 
         if bcrypt.checkpw(form_password, hashed_password.encode("utf-8")):
             payload = {
                 "sub": user.id,
-                "email": user.email,
-                "name": user.user.name,
-                "last_name": user.user.lastName,
+                "email": user.session.email,
+                "name": user.name,
+                "last_name": user.lastName,
             }
             return {
                 "access_token": await create_token(payload),

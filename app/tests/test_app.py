@@ -3,12 +3,14 @@ from app.tests.db_mock import test_db, test_client, create_token
 client = test_client
 
 user = {
-    "email": "testuser@mail.com", 
-    "name": "testpassword",
-    "last_name": "testpassword",
-    "phone": "123456",
-    "password": "12345678"
+    "email": "testuser@mail.com",
+    "name": "testName",
+    "last_name": "testLastName",
+    "image": "testImage",
+    "password": "testPassword",
+    "roleId": 1,
 }
+
 
 def test_home(test_db):
     """
@@ -21,17 +23,23 @@ def test_home(test_db):
         "Message": "Base Users CRUD !!",
     }
 
+
 def test_create_user(test_db):
     # When
-    response = client.post("/users/", json=user, headers={"Authorization": "Bearer " + create_token(user)})
+    response = client.post(
+        "/users/", json=user, headers={"Authorization": "Bearer " + create_token(user)}
+    )
 
     # Then
     assert response.status_code == 201
-    assert response.json()["email"] == user["email"]
-    
+    assert response.json()["name"] == user["name"]
+
+
 def test_read_user(test_db):
     # Given
-    response = client.post("/users/", json=user, headers={"Authorization": "Bearer " + create_token(user)})
+    response = client.post(
+        "/users/", json=user, headers={"Authorization": "Bearer " + create_token(user)}
+    )
     user_id = response.json()["id"]
 
     # When
@@ -39,30 +47,40 @@ def test_read_user(test_db):
 
     # Then
     assert response.status_code == 200
-    assert response.json()["email"] == user["email"]
-    
+    assert response.json()["name"] == user["name"]
+
+
 def test_update_user(test_db):
     # Given
-    response = client.post("/users/", json=user, headers={"Authorization": "Bearer " + create_token(user)})
+    response = client.post(
+        "/users/", json=user, headers={"Authorization": "Bearer " + create_token(user)}
+    )
     user_id = response.json()["id"]
-    update_user = {
-        "email": "updateduser_mail@mail.com"
-    }
+    update_user = {"email": "updateduser_mail@mail.com"}
 
     # When
-    response = client.patch(f"/users/{user_id}", json=update_user, headers={"Authorization": "Bearer " + create_token(user)})
+    response = client.patch(
+        f"/users/{user_id}",
+        json=update_user,
+        headers={"Authorization": "Bearer " + create_token(user)},
+    )
 
     # Then
     assert response.status_code == 200
     assert response.json()["email"] == update_user["email"]
-    
+
+
 def test_delete_user(test_db):
     # Given
-    response = client.post("/users/", json=user, headers={"Authorization": "Bearer " + create_token(user)})
+    response = client.post(
+        "/users/", json=user, headers={"Authorization": "Bearer " + create_token(user)}
+    )
     user_id = response.json()["id"]
 
     # When
-    response = client.delete(f"/users/{user_id}", headers={"Authorization": "Bearer " + create_token(user)})
+    response = client.delete(
+        f"/users/{user_id}", headers={"Authorization": "Bearer " + create_token(user)}
+    )
 
     # Then
     assert response.status_code == 200

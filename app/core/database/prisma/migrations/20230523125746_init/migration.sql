@@ -12,6 +12,15 @@ CREATE TABLE "user" (
 );
 
 -- CreateTable
+CREATE TABLE "role" (
+    "id" SERIAL NOT NULL,
+    "name" TEXT,
+    "description" TEXT,
+
+    CONSTRAINT "role_pkey" PRIMARY KEY ("id")
+);
+
+-- CreateTable
 CREATE TABLE "session" (
     "id" SERIAL NOT NULL,
     "email" TEXT NOT NULL,
@@ -24,15 +33,6 @@ CREATE TABLE "session" (
     "deletedAt" TIMESTAMP(3),
 
     CONSTRAINT "session_pkey" PRIMARY KEY ("id")
-);
-
--- CreateTable
-CREATE TABLE "role" (
-    "id" SERIAL NOT NULL,
-    "name" TEXT,
-    "description" TEXT,
-
-    CONSTRAINT "role_pkey" PRIMARY KEY ("id")
 );
 
 -- CreateIndex

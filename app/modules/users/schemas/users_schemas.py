@@ -3,30 +3,37 @@ from typing import Optional, Any
 from pydantic import BaseModel, Field, EmailStr
 
 
-class UserBase(BaseModel):
+class Session(BaseModel):
     email: EmailStr = Field(...)
+
+
+class UserBase(BaseModel):
     name: str = Field(...)
-    last_name: str = Field(...)
-    image: str = Field(...)
+    lastName: str = Field(...)
+    image: Optional[str] = Field(...)
+    session: Optional[Session]
 
 
 class UserCreate(UserBase):
+    email: EmailStr = Field(...)
     password: str = Field(..., min_length=8)
+    roleId: int = Field(...)
 
     class Config:
         schema_extra = {
             "example": {
-                "email": "mail@mail.com",
                 "name": "John",
                 "last_name": "Doe",
                 "image": "+58-000000000",
+                "email": "mail@mail.com",
                 "password": "12345678",
+                "roleId": 1,
             }
         }
 
 
 class UserUpdate(BaseModel):
-    # email: Optional[EmailStr] = Field(default=None)
+    email: Optional[EmailStr] = Field(default=None)
     name: Optional[str] = Field(default=None)
     last_name: Optional[str] = Field(default=None)
     image: Optional[str] = Field(default=None)
@@ -37,9 +44,6 @@ class UserUpdate(BaseModel):
 
 class User(UserBase):
     id: int = Field(...)
-    createdAt: str = Field(...)
-    updatedAt: str = Field(...)
-    deletedAt: Optional[str] = Field(...)
 
     class Config:
         orm_mode = True

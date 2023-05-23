@@ -35,7 +35,7 @@ async def create_user(
 
 @users_router.get(
     path="/users",
-    response_model=Page[Any],
+    response_model=Page[User],
     response_model_exclude_unset=True,
     status_code=status.HTTP_200_OK,
     dependencies=[],
@@ -97,7 +97,6 @@ async def update_user(
 
 @users_router.delete(
     path="/users/{user_id}",
-    response_model=User,
     response_model_exclude_unset=True,
     status_code=status.HTTP_200_OK,
     dependencies=[Depends(oauth2_scheme), Depends(JWTGuard())],
