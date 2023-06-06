@@ -12,3 +12,4 @@ fastapi-pagination
 httpx
 pytest
 sqlalchemy-seeder
+coverage
