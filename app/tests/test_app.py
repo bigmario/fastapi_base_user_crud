@@ -83,3 +83,9 @@ def test_delete_user(test_db):
 
     # Then
     assert response.status_code == 200
+
+    # Then
+
+    response = client.get(f"/users/{user_id}")
+
+    assert response.status_code == 404
