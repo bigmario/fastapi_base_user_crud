@@ -32,6 +32,8 @@ env:
   MAIL_PORT: 2525
   MAIL_SERVER: none
   MAIL_FROM_NAME: none
+  MAIL_USE_TLS: 1
+  MAIL_USE_SSL: 0
 
 # A workflow run is made up of one or more jobs that can run sequentially or in parallel
 jobs:
